@@ -20,7 +20,15 @@ const config = createConfig({
   transports: { [citadelChain.id]: http(citadelChain.rpcUrls.default.http[0]) }
 });
 
-createAppKit({ projectId, metadata: { name: "Citadel Onchain", url: "https://citadel.local", description: "Community-backed savings vault" } });
+createAppKit({
+  projectId,
+  networks: [citadelChain],
+  wagmiConfig: {
+    chains: [citadelChain],
+    transports: { [citadelChain.id]: http(citadelChain.rpcUrls.default.http[0]) }
+  },
+  metadata: { name: "Citadel Onchain", url: "https://citadel.local", description: "Community-backed savings vault" }
+});
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();

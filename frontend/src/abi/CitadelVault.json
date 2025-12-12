@@ -1,5 +1,11 @@
 {
   "abi": [
+    {"type":"constructor","stateMutability":"nonpayable","inputs":[]},
+    {"type":"function","name":"admin","stateMutability":"view","inputs":[],"outputs":[{"type":"address"}]},
+    {"type":"function","name":"paused","stateMutability":"view","inputs":[],"outputs":[{"type":"bool"}]},
+    {"type":"function","name":"pause","stateMutability":"nonpayable","inputs":[],"outputs":[]},
+    {"type":"function","name":"unpause","stateMutability":"nonpayable","inputs":[],"outputs":[]},
+    {"type":"function","name":"setAdmin","stateMutability":"nonpayable","inputs":[{"name":"a","type":"address"}],"outputs":[]},
     {"type":"event","name":"VaultCreated","inputs":[{"name":"id","type":"uint256","indexed":true},{"name":"owner","type":"address","indexed":true},{"name":"unlockAt","type":"uint64","indexed":false},{"name":"target","type":"uint256","indexed":false},{"name":"threshold","type":"uint8","indexed":false}],"anonymous":false},
     {"type":"event","name":"Deposited","inputs":[{"name":"id","type":"uint256","indexed":true},{"name":"from","type":"address","indexed":true},{"name":"amount","type":"uint256","indexed":false},{"name":"newBalance","type":"uint256","indexed":false}],"anonymous":false},
     {"type":"event","name":"EarlyApproval","inputs":[{"name":"id","type":"uint256","indexed":true},{"name":"guardian","type":"address","indexed":true},{"name":"approvals","type":"uint256","indexed":false},{"name":"enabled","type":"bool","indexed":false}],"anonymous":false},
