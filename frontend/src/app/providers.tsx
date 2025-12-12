@@ -4,8 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { celo } from "viem/chains";
 import { http } from "viem";
 import { AppKitProvider } from "@reown/appkit/react";
-import { createAppKit } from "@reown/appkit";
-import { AppKitWagmiConnector } from "@reown/appkit-wagmi/react";
+import { createAppKit } from "@reown/appkit-wagmi/react";
 
 const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID as string;
 const citadelChain = {
@@ -29,9 +28,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <AppKitProvider projectId={projectId}>
-          <AppKitWagmiConnector>
-            {children}
-          </AppKitWagmiConnector>
+          {children}
         </AppKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
