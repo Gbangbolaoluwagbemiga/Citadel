@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('@nomicfoundation/hardhat-ethers');
+require('@nomiclabs/hardhat-etherscan');
 
 module.exports = {
   solidity: '0.8.20',
@@ -13,5 +14,29 @@ module.exports = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 42220
     }
+  }
+  ,etherscan: {
+    apiKey: {
+      celo: process.env.CELOSCAN_API_KEY || '',
+      alfajores: process.env.CELOSCAN_API_KEY || ''
+    },
+    customChains: [
+      {
+        network: 'celo',
+        chainId: 42220,
+        urls: {
+          apiURL: 'https://celoscan.io/api',
+          browserURL: 'https://celoscan.io'
+        }
+      },
+      {
+        network: 'alfajores',
+        chainId: 44787,
+        urls: {
+          apiURL: 'https://alfajores.celoscan.io/api',
+          browserURL: 'https://alfajores.celoscan.io'
+        }
+      }
+    ]
   }
 };
