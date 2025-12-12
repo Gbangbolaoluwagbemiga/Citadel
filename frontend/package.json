@@ -9,9 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@reown/appkit": "^1.8.15",
+    "@reown/appkit-wagmi": "^1.0.7",
     "next": "16.0.10",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "viem": "^2.41.2",
+    "wagmi": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
