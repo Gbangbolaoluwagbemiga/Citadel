@@ -20,13 +20,14 @@ const config = createConfig({
   transports: { [citadelChain.id]: http(citadelChain.rpcUrls.default.http[0]) }
 });
 
+const caipNetworks = [
+  { id: 'eip155:42220', chainNamespace: 'eip155', rpcUrl: 'https://forno.celo.org', name: 'Celo' }
+];
+
 createAppKit({
   projectId,
-  networks: [citadelChain],
-  wagmiConfig: {
-    chains: [citadelChain],
-    transports: { [citadelChain.id]: http(citadelChain.rpcUrls.default.http[0]) }
-  },
+  networks: caipNetworks,
+  wagmiConfig: {},
   metadata: { name: "Citadel Onchain", url: "https://citadel.local", description: "Community-backed savings vault" }
 });
 
@@ -35,7 +36,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <AppKitProvider projectId={projectId}>
+        <AppKitProvider projectId={projectId} networks={caipNetworks}>
           {children}
         </AppKitProvider>
       </QueryClientProvider>
