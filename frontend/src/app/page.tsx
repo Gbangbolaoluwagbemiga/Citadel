@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import { readContract, writeContract } from "wagmi/actions";
 import abiJson from "@/abi/CitadelVault.json";
 import { AppKitButton } from "@reown/appkit/react";
@@ -9,13 +9,14 @@ const CITADEL_ADDRESS = process.env.NEXT_PUBLIC_CITADEL_ADDRESS as `0x${string}`
 
 export default function Home() {
   const { address, isConnected } = useAccount();
+  const config = useConfig();
   const [vaultId, setVaultId] = useState<string>("");
   const [vault, setVault] = useState<any>(null);
   const [status, setStatus] = useState<{paused:boolean;admin:`0x${string}`}|null>(null);
 
   async function loadVault() {
     if (!vaultId) return;
-    const res = await readContract({
+    const res = await readContract(config, {
       address: CITADEL_ADDRESS,
       abi: (abiJson as any).abi,
       functionName: "getVault",
@@ -25,13 +26,13 @@ export default function Home() {
   }
 
   async function loadStatus() {
-    const paused = await readContract({ address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: "paused", args: [] });
-    const admin = await readContract({ address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: "admin", args: [] }) as `0x${string}`;
+    const paused = await readContract(config, { address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: "paused", args: [] });
+    const admin = await readContract(config, { address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: "admin", args: [] }) as `0x${string}`;
     setStatus({ paused: paused as boolean, admin });
   }
 
   async function callPause(action: "pause"|"unpause") {
-    await writeContract({ address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: action, args: [] });
+    await writeContract(config, { address: CITADEL_ADDRESS, abi: (abiJson as any).abi, functionName: action, args: [] });
     await loadStatus();
   }
 

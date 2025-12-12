@@ -20,14 +20,15 @@ const config = createConfig({
   transports: { [citadelChain.id]: http(citadelChain.rpcUrls.default.http[0]) }
 });
 
-const caipNetworks = [
-  { id: 'eip155:42220', chainNamespace: 'eip155', rpcUrl: 'https://forno.celo.org', name: 'Celo' }
+const caipNetworks: any = [
+  { id: 'eip155:42220', chainNamespace: 'eip155', chainId: 42220, rpcUrl: 'https://forno.celo.org', name: 'Celo', currency: 'CELO', explorerUrl: 'https://celoscan.io' }
 ];
 
 createAppKit({
   projectId,
   networks: caipNetworks,
   wagmiConfig: {},
+  enableCoinbase: false,
   metadata: { name: "Citadel Onchain", url: "https://citadel.local", description: "Community-backed savings vault" }
 });
 
