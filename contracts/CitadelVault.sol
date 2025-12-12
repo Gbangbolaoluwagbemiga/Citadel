@@ -19,6 +19,8 @@ contract CitadelVault {
     }
 
     uint256 public nextVaultId;
+    address public admin;
+    bool public paused;
     mapping(uint256 => Vault) public vaults;
     mapping(uint256 => mapping(address => bool)) public isGuardian;
     mapping(uint256 => address[]) public guardianList;
@@ -35,12 +37,29 @@ contract CitadelVault {
     event GuardiansAdded(uint256 indexed id, address[] guardians);
     event GuardiansRemoved(uint256 indexed id, address[] guardians);
     event ThresholdUpdated(uint256 indexed id, uint8 threshold);
+    event Paused(bool paused);
+    event AdminSet(address indexed admin);
 
     modifier nonReentrant() {
         require(!_locked, "REENTRANCY");
         _locked = true;
         _;
         _locked = false;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "NOT_ADMIN");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!paused, "PAUSED");
+        _;
+    }
+
+    constructor() {
+        admin = msg.sender;
+        emit AdminSet(admin);
     }
 
 
@@ -51,7 +70,7 @@ contract CitadelVault {
         address[] calldata guardians,
         uint8 threshold,
         address token
-    ) external returns (uint256 id) {
+    ) external whenNotPaused returns (uint256 id) {
         require(unlockAt > block.timestamp, "INVALID_UNLOCK");
         require(threshold > 0 && threshold <= guardians.length, "INVALID_THRESHOLD");
         id = ++nextVaultId;
@@ -72,14 +91,14 @@ contract CitadelVault {
         emit VaultCreated(id, msg.sender, unlockAt, target, threshold);
     }
 
-    function setBeneficiary(uint256 id, address beneficiary) external {
+    function setBeneficiary(uint256 id, address beneficiary) external whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         v.beneficiary = beneficiary;
         emit BeneficiarySet(id, beneficiary);
     }
 
-    function deposit(uint256 id) external payable {
+    function deposit(uint256 id) external payable whenNotPaused {
         Vault storage v = vaults[id];
         require(v.owner != address(0), "NO_VAULT");
         require(v.token == address(0), "TOKEN_VAULT");
@@ -88,7 +107,7 @@ contract CitadelVault {
         emit Deposited(id, msg.sender, msg.value, v.balance);
     }
 
-    function depositToken(uint256 id, uint256 amount) external {
+    function depositToken(uint256 id, uint256 amount) external whenNotPaused {
         Vault storage v = vaults[id];
         require(v.owner != address(0), "NO_VAULT");
         require(v.token != address(0), "NATIVE_VAULT");
@@ -98,7 +117,7 @@ contract CitadelVault {
         emit Deposited(id, msg.sender, amount, v.balance);
     }
 
-    function approveEarly(uint256 id) external {
+    function approveEarly(uint256 id) external whenNotPaused {
         Vault storage v = vaults[id];
         require(v.owner != address(0), "NO_VAULT");
         require(isGuardian[id][msg.sender], "NOT_GUARDIAN");
@@ -112,7 +131,7 @@ contract CitadelVault {
         emit EarlyApproval(id, msg.sender, approvalCount[id], v.earlyEnabled);
     }
 
-    function withdrawOwner(uint256 id, uint256 amount) external nonReentrant {
+    function withdrawOwner(uint256 id, uint256 amount) external nonReentrant whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         require(v.owner != address(0), "NO_VAULT");
@@ -128,7 +147,7 @@ contract CitadelVault {
         emit Withdrawn(id, v.owner, amount, v.balance);
     }
 
-    function withdrawToBeneficiary(uint256 id, uint256 amount) external nonReentrant {
+    function withdrawToBeneficiary(uint256 id, uint256 amount) external nonReentrant whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         require(v.owner != address(0), "NO_VAULT");
@@ -145,7 +164,7 @@ contract CitadelVault {
         emit Withdrawn(id, v.beneficiary, amount, v.balance);
     }
 
-    function addGuardians(uint256 id, address[] calldata guardians) external {
+    function addGuardians(uint256 id, address[] calldata guardians) external whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         require(!v.earlyEnabled, "EARLY_ENABLED");
@@ -161,7 +180,7 @@ contract CitadelVault {
         emit GuardiansAdded(id, guardians);
     }
 
-    function removeGuardians(uint256 id, address[] calldata guardians) external {
+    function removeGuardians(uint256 id, address[] calldata guardians) external whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         require(!v.earlyEnabled, "EARLY_ENABLED");
@@ -180,7 +199,7 @@ contract CitadelVault {
         emit GuardiansRemoved(id, guardians);
     }
 
-    function setThreshold(uint256 id, uint8 threshold) external {
+    function setThreshold(uint256 id, uint8 threshold) external whenNotPaused {
         Vault storage v = vaults[id];
         require(msg.sender == v.owner, "NOT_OWNER");
         require(!v.earlyEnabled, "EARLY_ENABLED");
@@ -236,5 +255,21 @@ contract CitadelVault {
                 break;
             }
         }
+    }
+
+    function setAdmin(address a) external onlyAdmin {
+        require(a != address(0), "ZERO_ADMIN");
+        admin = a;
+        emit AdminSet(a);
+    }
+
+    function pause() external onlyAdmin {
+        paused = true;
+        emit Paused(true);
+    }
+
+    function unpause() external onlyAdmin {
+        paused = false;
+        emit Paused(false);
     }
 }
