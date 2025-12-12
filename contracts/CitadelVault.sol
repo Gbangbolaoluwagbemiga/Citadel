@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+interface IERC20 {
+    function transfer(address to, uint256 value) external returns (bool);
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
+}
+
 contract CitadelVault {
     struct Vault {
         address owner;
@@ -38,10 +43,6 @@ contract CitadelVault {
         _locked = false;
     }
 
-    interface IERC20 {
-        function transfer(address to, uint256 value) external returns (bool);
-        function transferFrom(address from, address to, uint256 value) external returns (bool);
-    }
 
     function createVault(
         uint64 unlockAt,
