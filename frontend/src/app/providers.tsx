@@ -1,5 +1,6 @@
 "use client";
 import { createConfig, WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { celo } from "viem/chains";
 import { http } from "viem";
 import { AppKitProvider } from "@reown/appkit/react";
@@ -23,13 +24,16 @@ const config = createConfig({
 createAppKit({ projectId, metadata: { name: "Citadel Onchain", url: "https://citadel.local", description: "Community-backed savings vault" } });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const queryClient = new QueryClient();
   return (
     <WagmiProvider config={config}>
-      <AppKitProvider projectId={projectId}>
-        <AppKitWagmiConnector>
-          {children}
-        </AppKitWagmiConnector>
-      </AppKitProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppKitProvider projectId={projectId}>
+          <AppKitWagmiConnector>
+            {children}
+          </AppKitWagmiConnector>
+        </AppKitProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   );
 }

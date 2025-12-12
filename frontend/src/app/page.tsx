@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { readContract } from "wagmi/actions";
 import abiJson from "@/abi/CitadelVault.json";
+import { AppKitButton } from "@reown/appkit/react";
 
 const CITADEL_ADDRESS = process.env.NEXT_PUBLIC_CITADEL_ADDRESS as `0x${string}`;
 
@@ -31,11 +32,10 @@ export default function Home() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Citadel Onchain</h1>
-      {!isConnected ? (
-        <button onClick={connect}>Connect Wallet</button>
-      ) : (
-        <div>Connected: {address}</div>
-      )}
+      <div style={{ marginBottom: 12 }}>
+        <AppKitButton />
+      </div>
+      {isConnected && <div>Connected: {address}</div>}
       <div style={{ marginTop: 16 }}>
         <input placeholder="Vault ID" value={vaultId} onChange={(e) => setVaultId(e.target.value)} />
         <button onClick={loadVault}>Load</button>

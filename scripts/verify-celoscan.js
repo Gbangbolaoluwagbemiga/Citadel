@@ -37,24 +37,26 @@ function get(url) {
 }
 
 async function main() {
-  const apiKey = process.env.CELOSCAN_API_KEY;
+  const apiKey = process.env.ETHERSCAN_API_KEY || process.env.CELOSCAN_API_KEY;
   const address = process.argv[2];
   if (!apiKey) throw new Error('Missing CELOSCAN_API_KEY');
   if (!address) throw new Error('Usage: node scripts/verify-celoscan.js <address>');
   const source = fs.readFileSync(path.join(__dirname, '..', 'contracts', 'CitadelVault.sol'), 'utf8');
 
   const compilerversion = 'v0.8.20+commit.a1b79de6';
-  const verifyUrl = 'https://api.celoscan.io/api';
+  const verifyUrl = 'https://api.celoscan.io/v2/api';
 
   const payload = {
     apikey: apiKey,
     module: 'contract',
     action: 'verifysourcecode',
+    chainid: '42220',
     contractaddress: address,
     sourceCode: source,
     codeformat: 'solidity-single-file',
-    contractname: 'CitadelVault',
+    contractname: 'contracts/CitadelVault.sol:CitadelVault',
     compilerversion,
+    evmversion: '',
     optimizationUsed: '0',
     runs: '200'
   };
