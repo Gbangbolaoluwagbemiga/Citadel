@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^4.3.7",
     "@reown/appkit": "^1.8.15",
+    "@reown/appkit-adapter-wagmi": "^1.8.15",
     "@reown/appkit-wagmi": "^1.0.7",
     "@tanstack/react-query": "^5.90.12",
     "next": "16.0.10",

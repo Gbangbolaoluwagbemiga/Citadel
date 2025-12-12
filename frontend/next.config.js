@@ -5,6 +5,9 @@ const nextConfig = {
     '@reown/appkit-wagmi',
     '@reown/appkit-adapter-wagmi'
   ],
+  turbopack: {
+    root: __dirname
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
