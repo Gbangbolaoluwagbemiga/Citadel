@@ -13,11 +13,11 @@ const wagmiAdapter = new WagmiAdapter({
   projectId
 });
 
-createAppKit({
-  adapters: [wagmiAdapter],
-  projectId,
-  networks,
-  defaultNetwork: celo,
+  createAppKit({
+    adapters: [wagmiAdapter],
+    projectId,
+    networks: networks as any,
+    defaultNetwork: celo,
   metadata: {
     name: "Citadel Onchain",
     description: "Community-backed savings vault",
@@ -34,7 +34,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as any}>
       <QueryClientProvider client={queryClient}>
-        <AppKitProvider projectId={projectId} networks={networks}>
+        <AppKitProvider projectId={projectId} networks={networks as any}>
           {children}
         </AppKitProvider>
       </QueryClientProvider>
